@@ -85,6 +85,14 @@
                     <input type="text" required="true" class="form-control" th:field="*{radius}" id="radius" />
                 </div>
                 
+                <div class="form-group">
+                    <label for="user">User Owner</label>
+                    <select id="user" th:field="*{user}" required="required">
+						<option value="">Select User</option>
+						<option th:each="user : ${users}" th:value="${user.id}" th:text="${user.username}" selected="selected"></option>
+					</select>
+                </div>
+                
             </div>
             <div class="box-footer">
                 <button type="submit" class="btn btn-primary">Salvar</button>

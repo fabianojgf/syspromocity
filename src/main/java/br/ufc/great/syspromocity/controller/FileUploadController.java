@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import br.ufc.great.syspromocity.model.User;
+import br.ufc.great.syspromocity.model.PUser;
 import br.ufc.great.syspromocity.service.UsersService;
 import br.ufc.great.syspromocity.util.Constantes;
 
@@ -25,7 +26,7 @@ import br.ufc.great.syspromocity.util.Constantes;
 public class FileUploadController {
 	
 	private UsersService userService;
-	private User loginUser;
+	private PUser loginUser;
 	
 	@Autowired
 	public void setUserService(UsersService userServices){
@@ -33,7 +34,7 @@ public class FileUploadController {
 	}
 
 	private void checkUser() {
-		User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();		
+		User userDetails = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();		
     	this.loginUser = userService.getUserByUserName(userDetails.getUsername());
 	}
 
@@ -77,7 +78,7 @@ public class FileUploadController {
 	  }
 	  
 	  checkUser();
-	  User user = this.userService.get(idUser);
+	  PUser user = this.userService.get(idUser);
 	  
    	  model.addAttribute("user", user);
 	  model.addAttribute("loginusername", loginUser.getUsername());

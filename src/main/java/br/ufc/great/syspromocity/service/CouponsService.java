@@ -23,15 +23,5 @@ public class CouponsService extends AbstractService<Coupon, Long>{
 	@Override
 	protected JpaRepository<Coupon, Long> getRepository() {
 		return couponsRepository;
-	}
-	
-	/**
-	 * Busca cupons por descrição
-	 * @param description Descrição de um cupom
-	 * @return List<Coupon> lista de cupons que casa com a descrição
-	 */
-	public List<Coupon> findByDescription(String description) {
-		return couponsRepository.findByDescription(description);
-	}
-	
+	}	
 }

@@ -17,12 +17,10 @@ import javax.persistence.Table;
 @Table(name="coupons")
 public class Coupon extends AbstractModel<Long>{
 	
-	@Column(length=255)
-	private String description;
 	@ManyToOne
 	private Promotion promotion;
 	@ManyToOne
-	private User user;
+	private PUser user;
 	private String qrCode;
 	private boolean activated = false;
 	private boolean consumed = false;
@@ -33,24 +31,14 @@ public class Coupon extends AbstractModel<Long>{
 		super();
 	}
 	
-	public Coupon(String description, String qrCode, Promotion promotion, User user) {
+	public Coupon(Promotion promotion, PUser user) {
 		super();
-		this.description = description;
-		this.qrCode = qrCode;
 		this.promotion = promotion;
 		this.user = user;
 	}
 	
 	public Long getId() {
 		return super.getId();
-	}
-	
-	public String getDescription() {
-		return description;
-	}
-	
-	public void setDescription(String description) {
-		this.description = description;
 	}
 	
     public Promotion getPromotion() {
@@ -61,11 +49,11 @@ public class Coupon extends AbstractModel<Long>{
 		this.promotion = promotion;
 	}
 
-	public User getUser() {
+	public PUser getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(PUser user) {
 		this.user = user;
 	}
 	
@@ -75,6 +63,22 @@ public class Coupon extends AbstractModel<Long>{
 	
 	public void setQrCode(String qrCode) {
 		this.qrCode = qrCode;
+	}
+
+	public Integer getNumRequiredCoUsers() {
+		return numRequiredCoUsers;
+	}
+
+	public void setNumRequiredCoUsers(Integer numRequiredCoUsers) {
+		this.numRequiredCoUsers = numRequiredCoUsers;
+	}
+
+	public Integer getNumActivedCoUsers() {
+		return numActivedCoUsers;
+	}
+
+	public void setNumActivedCoUsers(Integer numActivedCoUsers) {
+		this.numActivedCoUsers = numActivedCoUsers;
 	}
 
 	public boolean isActivated() {

@@ -14,7 +14,7 @@ public class Track extends AbstractModel<Long>{
 	private double longitude;
 	private Date date;
 	@ManyToOne(fetch = FetchType.EAGER)
-	private User user;
+	private PUser user;
 	
 	public Track() {
 	}
@@ -43,11 +43,11 @@ public class Track extends AbstractModel<Long>{
 		this.date = date;
 	}
 
-	public User getUser() {
+	public PUser getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(PUser user) {
 		this.user = user;
 	}
 }

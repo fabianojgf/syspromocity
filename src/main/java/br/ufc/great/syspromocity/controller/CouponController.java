@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.ufc.great.syspromocity.model.Coupon;
-import br.ufc.great.syspromocity.model.User;
+import br.ufc.great.syspromocity.model.PUser;
+import br.ufc.great.syspromocity.model.Promotion;
 import br.ufc.great.syspromocity.service.CouponsService;
+import br.ufc.great.syspromocity.service.PromotionsService;
 import br.ufc.great.syspromocity.service.UsersService;
 
 @Controller
@@ -22,7 +25,8 @@ public class CouponController {
 
     private CouponsService couponService;
     private UsersService userService;
-    private User loginUser;
+    private PromotionsService promotionService;
+    private PUser loginUser;
 
     @Autowired
     public void setCouponService(CouponsService couponService) {
@@ -33,12 +37,17 @@ public class CouponController {
     public void setUserService(UsersService userService) {
     	this.userService = userService;
     }
+    
+    @Autowired
+    public void setPromotionService(PromotionsService promotionService) {
+    	this.promotionService = promotionService;
+    }
 
     /**
      * Carrega os dados do usuário logado
      */
 	private void checkUser() {
-		User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();      	
+		User userDetails = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();      	
     	this.loginUser = userService.getUserByUserName(userDetails.getUsername());
 	}
 
@@ -106,8 +115,12 @@ public class CouponController {
     @RequestMapping("/coupons/add")
     public String add(Model model) {
     	checkUser();
+    	List<Promotion> promotions = promotionService.getAll();
+    	List<PUser> users = userService.getAll();
     	
         model.addAttribute("coupon", new Coupon());
+        model.addAttribute("promotions", promotions);
+        model.addAttribute("users", users);
         
     	model.addAttribute("loginusername", loginUser.getUsername());
     	model.addAttribute("loginemailuser", loginUser.getEmail());
@@ -126,8 +139,13 @@ public class CouponController {
     @RequestMapping("/coupons/edit/{id}")
     public String edit(@PathVariable Long id, Model model) {
     	checkUser();
+    	List<PUser> users = userService.getAll();
+    	List<Promotion> promotions = promotionService.getAll();
+    	
     	model.addAttribute("idCoupon", couponService.get(id).getId());
         model.addAttribute("coupon", couponService.get(id));
+        model.addAttribute("promotions", promotions);
+        model.addAttribute("users", users);
         
     	model.addAttribute("loginusername", loginUser.getUsername());
     	model.addAttribute("loginemailuser", loginUser.getEmail());

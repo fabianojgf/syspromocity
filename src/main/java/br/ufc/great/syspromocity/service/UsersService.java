@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
-import br.ufc.great.syspromocity.model.User;
+import br.ufc.great.syspromocity.model.PUser;
 import br.ufc.great.syspromocity.repository.UsersRepository;
 
 /**
@@ -13,17 +13,17 @@ import br.ufc.great.syspromocity.repository.UsersRepository;
  *
  */
 @Service
-public class UsersService extends AbstractService<User, Long>{
+public class UsersService extends AbstractService<PUser, Long>{
 
 	@Autowired
 	private UsersRepository usersRepository;
 	
 	@Override
-	protected JpaRepository<User, Long> getRepository(){
+	protected JpaRepository<PUser, Long> getRepository(){
 		return usersRepository;
 	}
 	
-	public User getUserByUserName(String username) {
+	public PUser getUserByUserName(String username) {
 		return usersRepository.findByUsername(username);
 	}
 }

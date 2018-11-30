@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.ufc.great.syspromocity.model.Authority;
-import br.ufc.great.syspromocity.model.User;
+import br.ufc.great.syspromocity.model.PUser;
 import br.ufc.great.syspromocity.service.AuthoritiesService;
 import br.ufc.great.syspromocity.util.GeradorSenha;
 import br.ufc.great.syspromocity.service.UsersService;
@@ -30,7 +31,7 @@ public class AccessControlController {
 	
 	private AuthoritiesService authoritiesService;
 	private UsersService userService;
-	private User loginUser;
+	private PUser loginUser;
 
 	@Autowired
 	public void setAuthoritiesService(AuthoritiesService authoritiesService) {
@@ -43,7 +44,7 @@ public class AccessControlController {
     }
 	
 	private void checkUser() {
-		User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();      	
+		User userDetails = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();      	
     	this.loginUser = userService.getUserByUserName(userDetails.getUsername());
 	}
 	

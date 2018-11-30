@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,8 +17,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.ufc.great.syspromocity.model.Coupon;
 import br.ufc.great.syspromocity.model.Promotion;
-import br.ufc.great.syspromocity.model.User;
+import br.ufc.great.syspromocity.model.Store;
+import br.ufc.great.syspromocity.model.PUser;
 import br.ufc.great.syspromocity.service.PromotionsService;
+import br.ufc.great.syspromocity.service.StoresService;
 import br.ufc.great.syspromocity.service.UsersService;
 import br.ufc.great.syspromocity.util.Constantes;
 import br.ufc.great.syspromocity.util.GeradorQRCode;
@@ -30,7 +33,8 @@ public class PromotionController {
     private PromotionsService promotionService;
     private List<Coupon> listCoupons=null;
     private UsersService userService;
-    private User loginUser;
+    private StoresService storeService;
+    private PUser loginUser;
     
     @Autowired
     public void setpromotionService(PromotionsService promotionService) {
@@ -41,9 +45,14 @@ public class PromotionController {
     public void setUserService(UsersService userService) {
     	this.userService = userService;
     }
+    
+    @Autowired
+    public void setStoreService(StoresService storeService) {
+    	this.storeService = storeService;
+    }
 
 	private void checkUser() {
-		User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();      	
+		User userDetails = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();      	
     	this.loginUser = userService.getUserByUserName(userDetails.getUsername());
 	}
     
@@ -102,9 +111,12 @@ public class PromotionController {
     @RequestMapping("/promotions/add")
     public String add(Model model) {
     	checkUser();
+    	List<Store> stores = storeService.getAll();
     	List<Coupon> emptyList = new LinkedList<Coupon>();
     	this.listCoupons = emptyList; 
-    	    	    	
+    	
+    	model.addAttribute("stores", stores);
+    	
     	model.addAttribute("loginusername", loginUser.getUsername());
     	model.addAttribute("loginemailuser", loginUser.getEmail());
     	model.addAttribute("loginuserid", loginUser.getId());
@@ -124,11 +136,15 @@ public class PromotionController {
     @RequestMapping("/promotions/edit/{id}")
     public String edit(@PathVariable Long id, Model model) {
     	checkUser();
-    	List<Coupon> listCoupons = promotionService.get(Long.valueOf(id)).getCoupons();    	    	    	
+
+    	List<Store> stores = storeService.getAll();
+    	Promotion promotion = promotionService.get(Long.valueOf(id));
+    	List<Coupon> listCoupons = promotion.getCoupons();    	    	    	
     	
     	this.listCoupons = listCoupons;    	
     	
-        model.addAttribute("promotion", promotionService.get(id));  
+        model.addAttribute("stores", stores);
+        model.addAttribute("promotion", promotion); 
         model.addAttribute("idPromotion", id);
         model.addAttribute("list", listCoupons);
     	
@@ -263,8 +279,13 @@ public class PromotionController {
     	for (Coupon element : listCoupons) {
     		if (element.getId()==idCoupon) {
     			coupon.setId(idCoupon);
-    			coupon.setDescription(element.getDescription());
+    			coupon.setPromotion(element.getPromotion());
+    			coupon.setUser(element.getUser());
     			coupon.setQrCode(element.getQrCode());
+    			coupon.setNumRequiredCoUsers(element.getNumRequiredCoUsers());
+    			coupon.setNumActivedCoUsers(element.getNumActivedCoUsers());
+    			coupon.setActivated(element.isActivated());
+    			coupon.setConsumed(element.isConsumed());
     			break;
     		}
     	}

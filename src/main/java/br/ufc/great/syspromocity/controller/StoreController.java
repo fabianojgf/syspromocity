@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import br.ufc.great.syspromocity.model.Coupon;
 import br.ufc.great.syspromocity.model.Promotion;
 import br.ufc.great.syspromocity.model.Store;
-import br.ufc.great.syspromocity.model.User;
+import br.ufc.great.syspromocity.model.PUser;
 import br.ufc.great.syspromocity.service.StoresService;
 import br.ufc.great.syspromocity.service.UsersService;
 
@@ -28,7 +29,7 @@ public class StoreController {
     private List<Promotion> listPromotions=null;
 	private List<Coupon> listCoupons;
 	private UsersService userService;
-	private User loginUser; 
+	private PUser loginUser; 
     
     @Autowired
     public void setStoreService(StoresService storeService) {
@@ -41,7 +42,7 @@ public class StoreController {
     }
 
 	private void checkUser() {
-		User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();  
+		User userDetails = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();  
     	this.loginUser = userService.getUserByUserName(userDetails.getUsername());
 	}
     
@@ -97,12 +98,19 @@ public class StoreController {
     @RequestMapping("/stores/add")
     public String add(Model model) {
     	checkUser();
+    	List<PUser> users = userService.getAll();
+    	
+    	Store store = new Store();
+    	store.setUser(loginUser);
+    	
     	this.listPromotions = null;
     	
     	model.addAttribute("loginusername", loginUser.getUsername());
     	model.addAttribute("loginemailuser", loginUser.getEmail());
     	model.addAttribute("loginuserid", loginUser.getId());
-        model.addAttribute("store", new Store());
+    	
+        model.addAttribute("store", store);
+        model.addAttribute("users", users);
         
         return "stores/form";
 
@@ -117,6 +125,7 @@ public class StoreController {
     @RequestMapping("/stores/edit/{id}")
     public String edit(@PathVariable Long id, Model model) {
     	checkUser();
+    	List<PUser> users = userService.getAll();
     	this.listPromotions = storeService.get(id).getPromotions();
     	
     	model.addAttribute("loginusername", loginUser.getUsername());
@@ -124,6 +133,7 @@ public class StoreController {
     	model.addAttribute("loginuserid", loginUser.getId());
     	
         model.addAttribute("store", storeService.get(id));
+        model.addAttribute("users", users);
         
         return "stores/form";
 
@@ -137,13 +147,11 @@ public class StoreController {
      */
     @RequestMapping(value = "/stores/save", method = RequestMethod.POST)
     public String save(Store store, final RedirectAttributes ra) {
-    	
     	store.setPromotions(this.listPromotions);
         Store save = storeService.save(store);
         ra.addFlashAttribute("successFlash", "Loja foi salva com sucesso.");
         
         return "redirect:/stores";
-
     }
     
     /**
@@ -156,8 +164,9 @@ public class StoreController {
     @RequestMapping(value = "/stores/{id}/promotions/save", method = RequestMethod.POST)
     public String savePromotion(@PathVariable("id") Integer id,Promotion promotion, final RedirectAttributes ra) {    	
     	Store store = storeService.get(Long.valueOf(id));
+    	promotion.setStore(store);
+    	store.getPromotions().add(promotion); 
     	
-    	store.getPromotions().add(promotion);    	
         Store save = storeService.save(store);        
         ra.addFlashAttribute("successFlash", "Loja foi salva com nova promoção.");
         
@@ -184,13 +193,15 @@ public class StoreController {
     @RequestMapping(value="/stores/{id}/promotions")
     public String listPromotions(@PathVariable("id") Long id, Model model) {
     	checkUser();
-    	List<Promotion> listPromotionsAux = storeService.get(Long.valueOf(id)).getPromotions();    	    	
+    	Store store = storeService.get(Long.valueOf(id));
+    	List<Promotion> listPromotionsAux = store.getPromotions();    	    	
     	this.listPromotions = listPromotionsAux; 
     	
     	model.addAttribute("loginusername", loginUser.getUsername());
     	model.addAttribute("loginemailuser", loginUser.getEmail());
     	model.addAttribute("loginuserid", loginUser.getId());
     	
+    	model.addAttribute("nameStore", store.getName());
     	model.addAttribute("idStore", id);
         model.addAttribute("list", listPromotionsAux);
         
@@ -234,7 +245,8 @@ public class StoreController {
     @RequestMapping("/stores/edit/{idStore}/promotions/edit/{idPromotion}")
     public String editPromotion(@PathVariable Long idStore, @PathVariable Long idPromotion, Model model) {    	
     	checkUser();
-    	List<Promotion> listPromotionsAux = storeService.get(idStore).getPromotions();
+    	Store store = storeService.get(idStore);
+    	List<Promotion> listPromotionsAux = store.getPromotions();
     	Promotion promotion = new Promotion();
     	
     	this.listPromotions = listPromotionsAux;
@@ -246,6 +258,11 @@ public class StoreController {
     			promotion.setDescription(element.getDescription());
     			promotion.setFromDate(element.getFromDate());
     			promotion.setToDate(element.getToDate());
+    			promotion.setStore(element.getStore());
+    			promotion.setNumMaxCoupons(element.getNumMaxCoupons());
+    			promotion.setNumReleasedCoupons(element.getNumReleasedCoupons());
+    			promotion.setNumRequiredCoUsers(element.getNumRequiredCoUsers());
+    			promotion.setSpecial(element.isSpecial());
     			promotion.setCoupons(this.listCoupons);
     			break;
     		}
@@ -255,7 +272,7 @@ public class StoreController {
     	model.addAttribute("loginemailuser", loginUser.getEmail());
     	model.addAttribute("loginuserid", loginUser.getId());
     	
-        model.addAttribute("store", storeService.get(idStore));  
+        model.addAttribute("store", store);  
         model.addAttribute("idStore", idStore);
         model.addAttribute("list", listPromotionsAux);
         model.addAttribute("promotion", promotion);
@@ -285,6 +302,7 @@ public class StoreController {
     		}    		
     	}
     	
+    	promotion.setStore(store);
     	store.getPromotions().add(promotion);
     	
     	//salva a loja com os novos dados de promoão
@@ -363,7 +381,7 @@ public class StoreController {
     	checkUser();    	    	
     	List<Store> myStores = new LinkedList<Store>();
     	
-    	User user = this.userService.get(idUser);
+    	PUser user = this.userService.get(idUser);
     	myStores = user.getStores();
 		
     	model.addAttribute("loginusername", loginUser.getUsername());

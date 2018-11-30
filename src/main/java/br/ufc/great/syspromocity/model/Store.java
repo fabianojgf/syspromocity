@@ -21,7 +21,7 @@ public class Store extends AbstractModel<Long>{
 	private double longitude;
 	private double radius;
 	@ManyToOne(fetch = FetchType.EAGER)
-	private User user;
+	private PUser user;
 	
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy="store")
 	private List<Promotion> promotions = new LinkedList<Promotion>();
@@ -101,11 +101,11 @@ public class Store extends AbstractModel<Long>{
 		this.longitude = longitude;
 	}
 
-	public User getUser() {
+	public PUser getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(PUser user) {
 		this.user = user;
 	}
 	

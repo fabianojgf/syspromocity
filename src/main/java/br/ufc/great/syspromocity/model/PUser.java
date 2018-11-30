@@ -30,7 +30,7 @@ import br.ufc.great.syspromocity.model.AbstractModel;
  */
 @Entity
 @Table(name="users")
-public class User extends AbstractModel<Long>{
+public class PUser extends AbstractModel<Long>{
 	
 	@Column(length=50)
 	private String username;
@@ -68,13 +68,13 @@ public class User extends AbstractModel<Long>{
 	@JoinTable(name="user_friendship", 
 		joinColumns = { @JoinColumn(name = "user_id") },
         inverseJoinColumns = { @JoinColumn(name = "user_friend_id") })
- 	private List<User> friends = new ArrayList<User>();
+ 	private List<PUser> friends = new ArrayList<PUser>();
 	
-	public User() {
-		this.friends = new ArrayList<User>();
+	public PUser() {
+		this.friends = new ArrayList<PUser>();
 	}
 	
-	public User(String username, String password, String email) {
+	public PUser(String username, String password, String email) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -174,11 +174,11 @@ public class User extends AbstractModel<Long>{
 		}
 	}
 
-	public List<User> getFriends() {
+	public List<PUser> getFriends() {
 		return friends;
 	}
 
-	public void setFriends(List<User> friends) {
+	public void setFriends(List<PUser> friends) {
 		this.friends = friends;
 	}
 
@@ -186,7 +186,7 @@ public class User extends AbstractModel<Long>{
 	 * Adiciona um novo id de amigo
 	 * @param idFriend
 	 */
-	public boolean addFriend(User friend) {
+	public boolean addFriend(PUser friend) {
 		if (!alreadyFriend(friend)) {
 			this.friends.add(friend);	
 			return true;
@@ -195,9 +195,9 @@ public class User extends AbstractModel<Long>{
 		} 
 	}
 	
-	public boolean alreadyFriend(User friend) {
+	public boolean alreadyFriend(PUser friend) {
 		//percorre a lista de amigos e checa se o amigo já está nela
-		for (User userFriend : this.friends) {
+		for (PUser userFriend : this.friends) {
 			if (userFriend.getId() == friend.getId()) {
 				return true;
 			}
@@ -205,11 +205,11 @@ public class User extends AbstractModel<Long>{
 		return false;
 	}
 	
-	public boolean deleteFriend(User friend) {		
+	public boolean deleteFriend(PUser friend) {		
 		//pega a lista de amigos
-		Iterator<User> it = friends.iterator();
+		Iterator<PUser> it = friends.iterator();
 		while(it.hasNext()) {
-			User userFriend = it.next();
+			PUser userFriend = it.next();
 			if (userFriend.getId() == friend.getId()) {
 				it.remove();
 				return true;

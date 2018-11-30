@@ -21,18 +21,24 @@
             <table class="table table-striped">
                 <tr>
                     <th>ID</th>
-                    <th>Descrição</th>
-                    <th>Desconto</th>
-                    <th>Disponíveis</th>
+                    <th>Promotion</th>
+                    <th>User</th>
                     <th>QRCode</th>
-                    <th>Imagem</th>
+                    <th>Required CoUsers</th>
+                    <th>Actived CoUsers</th>
+                    <th>Actived</th>
+                    <th>Consumed</th>
+                    <th>Image</th>
                 </tr>
                 <tr th:each="row : ${list}">
                     <td th:text="${row.id}"></td>
-                    <td th:text="${row.description}"></td>
-                    <td th:text="${row.discount}"></td>
-                    <td th:text="${row.limitedToUse - row.used}"></td>
-                    <td th:text="${row.qrCode}"></td>
+                    <td th:text="${row.promotion.description}"></td>
+                    <td th:text="${row.user.username}"></td>
+                    <td th:text="${row.qrCode}"></td> 
+                    <td th:text="${row.numRequiredCoUsers}"></td>
+                    <td th:text="${row.numActivedCoUsers}"></td>
+                    <td th:text="${row.activated}"></td>
+                    <td th:text="${row.consumed}"></td>
 					<td><img alt="Image" th:src="${'/coupons/image/'+row.id}" width="50" height="50" /></td>
 					</tr>
             </table>

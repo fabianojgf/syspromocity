@@ -9,5 +9,5 @@ import br.ufc.great.syspromocity.model.Coupon;
 
 @Repository
 public interface CouponsRepository extends JpaRepository<Coupon, Long>{
-	List<Coupon> findByDescription(String description);
+	
 }

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import br.ufc.great.syspromocity.model.Store;
-import br.ufc.great.syspromocity.model.User;
+import br.ufc.great.syspromocity.model.PUser;
 import br.ufc.great.syspromocity.service.CouponsService;
 import br.ufc.great.syspromocity.service.PromotionsService;
 import br.ufc.great.syspromocity.service.StoresService;
@@ -103,7 +103,7 @@ public class DashboardController {
     	totalCoupons = (int) this.couponService.count();
     	this.userName = principal.getName();
     	
-    	User loginUser = userService.getUserByUserName(userName);
+    	PUser loginUser = userService.getUserByUserName(userName);
     	
     	checkAccessControl();
     	    	
@@ -128,14 +128,17 @@ public class DashboardController {
     @RequestMapping("/dashboard/user")
     public String indexUser(Model model, Principal principal) {    	
     	this.userName = principal.getName();    	
-    	int totalUsers = (int) this.userService.count();    	
-    	User loginUser = userService.getUserByUserName(userName);
-    	    	
+    	int totalUsers = (int) this.userService.count(); 
+    	
+    	PUser loginUser = userService.getUserByUserName(userName);
+    	int totalCoupons = (int) loginUser.getCoupons().size();
+    	
     	checkAccessControl();
     	
     	model.addAttribute("loginusername", loginUser.getUsername());
     	model.addAttribute("loginemailuser", loginUser.getEmail());
     	model.addAttribute("loginuserid", loginUser.getId());
+    	model.addAttribute("totalCoupons", totalCoupons);
     	model.addAttribute("totalUsers", totalUsers);
     	model.addAttribute("acesso", acesso);
     	
@@ -151,7 +154,7 @@ public class DashboardController {
     @RequestMapping("/dashboard/storeowner")
     public String indexStoreOwner(Model model, Principal principal) {
     	this.userName = principal.getName();
-    	User loginUser = userService.getUserByUserName(userName);    	    	
+    	PUser loginUser = userService.getUserByUserName(userName);    	    	
     	int totalMyStores=0;    	
     	List<Store> myStores = new ArrayList<Store>();    	
     	

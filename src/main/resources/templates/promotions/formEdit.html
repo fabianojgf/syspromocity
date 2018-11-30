@@ -8,7 +8,7 @@
     <h1>Cadastro de Promoção</h1>
     <ol class="breadcrumb">
         <li><a href="/"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-        <li class="active">Cadastro de Promoão</li>
+        <li class="active">Cadastro de Promoção</li>
     </ol>
 </section>
 <div layout:fragment="content">
@@ -27,14 +27,53 @@
                     <label for="description">Descricao</label>
                     <input type="text" required="true" class="form-control" th:field="*{description}" id="description" />
                 </div>
+                
                 <div class="form-group">
-                    <label for="fromDate">De (yyyy/mm/dd)</label>
-                    <input type="text" required="true" class="form-control" th:field="*{fromDate}" id="fromDate" />
+                    <label for="store">Store</label>
+                    <select id="store" th:field="*{store}" required="required">
+						<option value="">Select Store</option>
+						<option th:each="store : ${stores}" th:value="${store.id}" th:text="${store.name}" selected="selected"></option>
+					</select>
+                </div>
+                	 
+               	<script src="/plugins/jQuery/jQuery-2.2.0.min.js"></script>
+				<script src="/plugins/input-mask/jquery.inputmask.js"></script>
+				
+                <div class="form-group">
+					<label for="fromDate">Data de início</label>
+					<div class="input-group">
+						<div class="input-group-addon">
+							<i class="fa fa-calendar"></i>
+						</div>
+						<input class="form-control" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask="" type="text" required="true" th:field="*{fromDate}" id="fromDate"></input>
+					</div>
+					<!-- /.input group -->
+				</div>
+
+				<div class="form-group">
+					<label for="toDate">Data de fim</label>
+					<div class="input-group">
+						<div class="input-group-addon">
+							<i class="fa fa-calendar"></i>
+						</div>
+						<input class="form-control" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask="" type="text" required="true" th:field="*{toDate}" id="toDate"></input>
+					</div>
+					<!-- /.input group -->
+				</div>
+                
+                <div class="form-group">
+                    <label for="numRequiredCoUsers">Quantidade de Usuários para Ativar</label>
+                    <input type="number" required="true" class="form-control" th:field="*{numRequiredCoUsers}" id="numRequiredCoUsers" />
                 </div>
                 
                 <div class="form-group">
-                    <label for="toDate">Até (yyyy/mm/dd)</label>
-                    <input type="text" required="true" class="form-control" th:field="*{toDate}" id="toDate" />
+                    <label for="numMaxCoupons">Quantidade Máxima de Cupons</label>
+                    <input type="number" required="true" class="form-control" th:field="*{numMaxCoupons}" id="numMaxCoupons" />
+                </div>
+                
+                <div class="form-group">
+                    <label for="special">Especial</label>
+                    <input type="checkbox" class="form-check-input" th:field="*{special}" id="special" />
                 </div>
                 
             </div>
@@ -43,30 +82,31 @@
             </div>
             
         </form>
-        
-            <div class="box-body no-padding">
-            <table class="table table-striped">
-                <tr>
-                    <th>ID</th>
-                    <th>Descrição</th>
-                    <th>Desconto</th>
-                    <th>QRCode</th>
-                    <th>Ações</th>
-                </tr>
-                <tr th:each="row : ${list}">
-                    <td th:text="${row.id}"></td>
-                    <td th:text="${row.description}"></td>
-                    <td th:text="${row.discount}"></td>
-                    <td th:text="${row.qrCode}"></td> 
-                    <td>
-                       <a th:href="${'/promotions/edit/'+idPromotion+'/coupons/edit/' + row.id}">editar</a> -
-                        <a th:href="${'/promotions/edit/'+idPromotion+'/coupons/delete/' + row.id}">excluir</a>                        
-                    </td>
-                </tr>
-            	</table>
-        	</div>
-        
     </div>
+    
+	<!-- Page script -->
+	<script type="text/javascript">
+	$j=jQuery.noConflict();
+	$j(document).ready(function () {
+	    $j("#fromDate").inputmask('99/99/9999', {
+	        greedy: false,
+	        showMaskOnFocus: true,
+	        showMaskOnHover: false,
+	        noValuePatching: true
+	    });
+	    document.getElementById("fromDate").value = "29/11/2018";
+	
+	    $j("#toDate").inputmask('99/99/9999', {
+	        greedy: false,
+	        showMaskOnFocus: true,
+	        showMaskOnHover: false,
+	        noValuePatching: true
+	    });
+	    document.getElementById("toDate").value = "10/12/2018";
+	
+	});
+	</script>
+
 </div>
 </body>
 </html>

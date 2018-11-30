@@ -27,6 +27,20 @@
 		<!-- /.box -->
 
 		<p class="lead">Dashboard Administrativo</p>
+		
+		<div class="col-md-3 col-sm-6 col-xs-12">
+				<div class="info-box">
+					<!-- Apply any bg-* class to to the icon to color it -->
+					<span class="info-box-icon bg-yellow"><i
+						class="fa fa-files-o"></i></span>
+					<div class="info-box-content">
+						<span class="info-box-text"><a th:href="${'/users/'+ loginuserid + '/coupons'}">Cupons</a></span> <span
+							class="info-box-number" th:text="${totalCoupons}"></span>
+					</div>
+					<!-- /.info-box-content -->
+				</div>
+				
+			</div>
 
 		<div class="row">							
 			<div class="col-md-3 col-sm-6 col-xs-12">

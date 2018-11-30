@@ -5,10 +5,11 @@
 </head>
 <body>
 <section layout:fragment="header">
-    <h1>Edita Cupom na Promoção id</h1>
+	<h1>Editar Cupom</h1>
+	<h2 th:text="${'Promoção: '+promotion.description}"></h2>
     <ol class="breadcrumb">
         <li><a href="/"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-        <li class="active">Edita Cupom na Promoção id</li>
+        <li class="active">Editar Cupom da Promoção id</li>
     </ol>
 </section>
 <div layout:fragment="content">
@@ -22,23 +23,50 @@
         <form data-toggle="validator" role="form" th:object="${coupon}" th:action="${'/promotions/'+idPromotion+'/coupons/save/'+idCoupon}" method="post">
             <div class="box-body">
                 <input type="hidden" th:field="*{id}"/>
+                <input type="hidden" th:field="*{promotion}"/>
+                <input type="hidden" th:field="*{user}"/>
 
-                <div class="form-group">
-                    <label for="description">Descricao</label>
-                    <input type="text" required="true" class="form-control" th:field="*{description}" id="description" />
+				<div class="form-group">
+                    <label for="id">ID</label>
+                    <p id="id"> <span th:text="*{id}"/></p>
                 </div>
                 <div class="form-group">
-                    <label for="discount">Desconto</label>
-                    <input type="text" required="true" class="form-control" th:field="*{discount}" id="discount" />
+                    <label for="promotion">Promotion</label>
+                    <p id="promotion"> <span th:text="*{promotion.description}"/></p>
+                </div>
+                <div class="form-group">
+                    <label for="promotion">Store</label>
+                    <p id="promotion"> <span th:text="*{promotion.store.name}"/></p>
+                </div>
+                <div class="form-group">
+                    <label for="user">User</label>
+                    <p id="user"><span th:text="*{user.username}"/></p>
                 </div>
                 
                 <div class="form-group">
                     <label for="qrCode">QRCode</label>
                     <input type="text" required="true" class="form-control" th:field="*{qrCode}" id="qrCode" readonly="readonly"/>
                 </div>
-                <div class="form-group">                                   
-                    <img alt="Image" th:src="${'/coupons/image/'+idCoupon}" width="250" height="250"/>                 
-                </div>                
+                
+                <div class="form-group">
+                    <label for="numRequiredCoUsers">Required CoUsers</label>
+                    <input type="number" required="true" class="form-control" th:field="*{numRequiredCoUsers}" id="numRequiredCoUsers" />
+                </div>
+                
+                <div class="form-group">
+                    <label for="numActivedCoUsers">Actived CoUsers</label>
+                    <p id="numActivedCoUsers"><span th:text="*{numActivedCoUsers}"/></p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="activated">Activated</label>
+                    <input type="checkbox" class="form-check-input" th:field="*{activated}" id="activated" />
+                </div>
+                
+                <div class="form-group">
+                    <label for="special">Consumed</label>
+                    <input type="checkbox" class="form-check-input" th:field="*{consumed}" id="consumed" />
+                </div>               
             </div>
             <div class="box-footer">
                 <button type="submit" class="btn btn-primary">Salvar</button>

@@ -6,7 +6,7 @@
 <body>
 
 <section layout:fragment="header">
-<h1 th:text="${'Promoções da Loja '+idStore}"></h1>
+<h1 th:text="${'Promoções da '+nameStore}"></h1>
 
 <ol class="breadcrumb">
     <li><a href="/"><i class="fa fa-dashboard"></i> Dashboard</a></li>
@@ -32,13 +32,21 @@
                     <th>Description</th>
                     <th>From</th>
                     <th>To</th>
+                    <th>Required CoUsers</th>
+                    <th>Max Coupons</th>
+                    <th>Released Coupons</th>
+                    <th>Special</th>
                     <th>Ações</th>
                 </tr>
                 <tr th:each="row : ${list}">
                     <td th:text="${row.id}"></td>
                     <td th:text="${row.description}"></td>
-                    <td th:text="${row.fromDate}"></td>
-                    <td th:text="${row.toDate}"></td> 
+                    <td th:text="${#dates.format(row.fromDate, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${#dates.format(row.toDate, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${row.numRequiredCoUsers}"></td>
+                    <td th:text="${row.numMaxCoupons}"></td>
+                    <td th:text="${row.numReleasedCoupons}"></td>
+                    <td th:text="${row.special}"></td>
                     <td>
                         <a th:href="${'/stores/edit/'+idStore+'/promotions/edit/' + row.id}">editar</a> -
                         <a th:href="${'/stores/edit/'+idStore+'/promotions/delete/' + row.id}">excluir</a> -

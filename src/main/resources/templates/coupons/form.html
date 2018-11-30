@@ -23,22 +23,47 @@
             <div class="box-body">
                 <input type="hidden" th:field="*{id}"/>
 
-                <div class="form-group">
-                    <label for="description">Descricao</label>
-                    <input type="text" required="true" class="form-control" th:field="*{description}" id="description" />
+				<div class="form-group">
+                    <label for="promotion">Promotion</label>
+                    <select id="promotion" th:field="*{promotion}" required="required">
+						<option value="">Select Promotion</option>
+						<option th:each="promotion : ${promotions}" th:value="${promotion.id}" th:text="${promotion.description}" selected="selected"></option>
+					</select>
                 </div>
+                
                 <div class="form-group">
-                    <label for="discount">Desconto</label>
-                    <input type="text" required="true" class="form-control" th:field="*{discount}" id="discount" />
+                    <label for="user">User</label>
+                    <select id="user" th:field="*{user}" required="required">
+						<option value="">Select User</option>
+						<option th:each="user : ${users}" th:value="${user.id}" th:text="${user.username}" selected="selected"></option>
+					</select>
                 </div>
                 
                 <div class="form-group">
                     <label for="qrCode">QRCode</label>
-                    <input type="text" required="true" class="form-control" th:field="*{qrCode}" id="qrCode" />
+                    <input type="text" required="true" class="form-control" th:field="*{qrCode}" id="qrCode" readonly="readonly"/>
                 </div>
-                <div class="form-group">                                   
-                    <img alt="Image" th:src="${'/coupons/image/'+idCoupon}" width="250" height="250"/>                 
+                
+                <div class="form-group">
+                    <label for="numRequiredCoUsers">Required CoUsers</label>
+                    <input type="number" required="true" class="form-control" th:field="*{numRequiredCoUsers}" id="numRequiredCoUsers" />
                 </div>
+                
+                <div class="form-group">
+                    <label for="numActivedCoUsers">Actived CoUsers</label>
+                    <input type="number" required="true" class="form-control" th:field="*{numActivedCoUsers}" id="numActivedCoUsers" />
+                </div>
+                
+                <div class="form-group">
+                    <label for="activated">Actived</label>
+                    <input type="checkbox" class="form-check-input" th:field="*{activated}" id="activated" />
+                </div>
+                
+                <div class="form-group">
+                    <label for="consumed">Consumed</label>
+                    <input type="checkbox" class="form-check-input" th:field="*{consumed}" id="consumed" />
+                </div>
+                
             </div>
             <div class="box-footer">
                 <button type="submit" class="btn btn-primary">Salvar</button>

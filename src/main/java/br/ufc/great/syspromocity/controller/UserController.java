@@ -10,6 +10,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.ufc.great.syspromocity.model.Authority;
 import br.ufc.great.syspromocity.model.Coupon;
-import br.ufc.great.syspromocity.model.User;
+import br.ufc.great.syspromocity.model.PUser;
 import br.ufc.great.syspromocity.service.AuthoritiesService;
 import br.ufc.great.syspromocity.service.UsersService;
 import br.ufc.great.syspromocity.util.Constantes;
@@ -36,7 +37,7 @@ import br.ufc.great.syspromocity.util.GeradorSenha;
 public class UserController {
 
 	private UsersService userService;
-	private User loginUser;
+	private PUser loginUser;
 	private AuthoritiesService authoritiesService;
 	
 	@Autowired
@@ -50,7 +51,7 @@ public class UserController {
 	}
 
 	private void checkUser() {
-		User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();		
+		User userDetails = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();		
     	this.loginUser = userService.getUserByUserName(userDetails.getUsername());
 	}
 	
@@ -62,7 +63,7 @@ public class UserController {
 	@RequestMapping(value = "/users")
 	public String index(Model model){
 		checkUser();    	
-    	List<User> list = userService.getAll();
+    	List<PUser> list = userService.getAll();
     	
     	model.addAttribute("loginusername", loginUser.getUsername());
     	model.addAttribute("loginemailuser", loginUser.getEmail());
@@ -82,7 +83,7 @@ public class UserController {
     @RequestMapping(value = "/users/{pageNumber}", method = RequestMethod.GET)
     public String list(@PathVariable Integer pageNumber, Model model) {
     	checkUser();
-    	Page<User> page = this.userService.getList(pageNumber);
+    	Page<PUser> page = this.userService.getList(pageNumber);
 		   
         int current = page.getNumber() + 1;
         int begin = Math.max(1, current - 5);
@@ -108,7 +109,7 @@ public class UserController {
     public String add(Model model) {
 		checkUser();    	
     	
-        model.addAttribute("user", new User());
+        model.addAttribute("user", new PUser());
         model.addAttribute("loginusername", loginUser.getUsername());
     	model.addAttribute("loginemailuser", loginUser.getEmail());
     	model.addAttribute("loginuserid", loginUser.getId());
@@ -127,7 +128,7 @@ public class UserController {
     public String edit(@PathVariable Long id, Model model) {
 		checkUser();    	
     	
-		User editUser = userService.get(id);
+		PUser editUser = userService.get(id);
 		
         model.addAttribute("user", editUser);
         model.addAttribute("loginusername", loginUser.getUsername());
@@ -150,11 +151,11 @@ public class UserController {
     public String editProfile(@PathVariable Long id, Model model) {
 		checkUser();    	
     	
-		User user = this.userService.get(loginUser.getId());
-		List<User> idFriends = user.getFriends();		
-		List<User> listaAmigos = new LinkedList<User>();
+		PUser user = this.userService.get(loginUser.getId());
+		List<PUser> idFriends = user.getFriends();		
+		List<PUser> listaAmigos = new LinkedList<PUser>();
 		
-		for (User ids : idFriends) {
+		for (PUser ids : idFriends) {
 			listaAmigos.add(this.userService.get(ids.getId()));
 		}
         model.addAttribute("listfriends", listaAmigos);
@@ -179,14 +180,14 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/users/save", method = RequestMethod.POST)
-    public String save(User user, @RequestParam("password") String password, 
+    public String save(PUser user, @RequestParam("password") String password, 
     		@RequestParam("confirmpassword") String confirmPassword, final RedirectAttributes ra) {
     	String senhaCriptografada;
     	
     	if (password.equals(confirmPassword)){
         	senhaCriptografada = new GeradorSenha().criptografa(password);
         	user.setPassword(senhaCriptografada);
-            User save = userService.save(user);
+            PUser save = userService.save(user);
             ra.addFlashAttribute("successFlash", "Usuário foi salvo com sucesso.");
             return "redirect:/users";	
     	}else{
@@ -206,14 +207,14 @@ public class UserController {
      * @return página que lista todos os usuários
      */
     @RequestMapping(value = "/users/saveedited", method = RequestMethod.POST)
-    public String saveEdited(User user, @RequestParam("password") String originalPassword, 
+    public String saveEdited(PUser user, @RequestParam("password") String originalPassword, 
     		@RequestParam("newpassword") String newPassword, @RequestParam("confirmnewpassword") String confirmNewPassword, 
     		final RedirectAttributes ra) {
     	
     	checkUser();
     	
     	String recuperaPasswordBanco;
-    	User userOriginal = userService.get(user.getId());
+    	PUser userOriginal = userService.get(user.getId());
     	
     	recuperaPasswordBanco = userOriginal.getPassword();
     	
@@ -221,7 +222,7 @@ public class UserController {
         	if (new GeradorSenha().comparaSenhas(originalPassword, recuperaPasswordBanco)){
         		String novaSenhaCriptografada = new GeradorSenha().criptografa(newPassword);
         		user.setPassword(novaSenhaCriptografada);
-                User save = userService.save(user);
+                PUser save = userService.save(user);
                 ra.addFlashAttribute("successFlash", "Usuário " + user.getUsername() + " foi alterado com sucesso.");
                 return "redirect:/users";    		
         	}else{
@@ -274,7 +275,7 @@ public class UserController {
     @RequestMapping(value = "/users/list", method = RequestMethod.GET)
     public String listAllUsers(Model model) {
     	checkUser();   	
-    	List<User> users =  this.userService.getAll();
+    	List<PUser> users =  this.userService.getAll();
     	
         model.addAttribute("list", users);
         model.addAttribute("loginusername", loginUser.getUsername());
@@ -296,8 +297,8 @@ public class UserController {
     public String addFriend(@PathVariable long idUser, @PathVariable long idFriend, Model model, final RedirectAttributes ra) {
     	checkUser();
     	String mensagem="";    	        	
-    	User user = this.userService.get(idUser);
-    	User friend = this.userService.get(idFriend);
+    	PUser user = this.userService.get(idUser);
+    	PUser friend = this.userService.get(idFriend);
     	
     	if (user.addFriend(friend)) {
     		this.userService.save(user);
@@ -323,12 +324,12 @@ public class UserController {
     public String listFriends(@PathVariable long idUser, Model model) {    
 		checkUser();    	
 
-		User user = this.userService.get(idUser);
-		List<User> idFriends = user.getFriends();
+		PUser user = this.userService.get(idUser);
+		List<PUser> idFriends = user.getFriends();
 		
-		List<User> listaAmigos = new LinkedList<User>();
+		List<PUser> listaAmigos = new LinkedList<PUser>();
 		
-		for (User id : idFriends) {
+		for (PUser id : idFriends) {
 			listaAmigos.add(this.userService.get(id.getId()));
 		}
 
@@ -354,8 +355,8 @@ public class UserController {
     	checkUser();
     	String mensagem = "";
     	        	
-    	User user = this.userService.get(idUser);
-    	User friend = this.userService.get(idFriend);
+    	PUser user = this.userService.get(idUser);
+    	PUser friend = this.userService.get(idFriend);
     	
     	if (user.deleteFriend(friend)) {        	 
         	this.userService.save(user);
@@ -381,7 +382,7 @@ public class UserController {
     @RequestMapping(value = "/users/{idUser}/amount/friends")
     @ResponseBody
     public int getAmountOfFriends(@PathVariable(value = "idUser") Long idUser) throws IOException {
-    	User user = this.userService.get(idUser);    	
+    	PUser user = this.userService.get(idUser);    	
         return user.getAmountOfFriends();
     }
 
@@ -394,7 +395,7 @@ public class UserController {
     @RequestMapping(value = "/users/{idUser}/amount/coupons")
     @ResponseBody
     public int getAmountOfCoupons(@PathVariable(value = "idUser") Long idUser) throws IOException {
-    	User user = this.userService.get(idUser);    	
+    	PUser user = this.userService.get(idUser);    	
         return user.getAmountOfCoupons();
     }
  
@@ -402,7 +403,7 @@ public class UserController {
 	public String selectImage(@PathVariable(value = "idUser") Long idUser, Model model){
 		checkUser();    	
 
-		User editUser = userService.get(idUser);
+		PUser editUser = userService.get(idUser);
 		
         model.addAttribute("user", editUser);
         model.addAttribute("loginusername", loginUser.getUsername());
@@ -426,17 +427,17 @@ public class UserController {
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	public String showRegistrationPage(Model model){
 		//TODO é preciso zerar a sessão do usuário
-		model.addAttribute("user", new User());		
+		model.addAttribute("user", new PUser());		
 		return "/register";
 	}
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public String processRegistrationForm(Model model, User user, @RequestParam("password") String password, 
+	public String processRegistrationForm(Model model, PUser user, @RequestParam("password") String password, 
     		@RequestParam("confirmpassword") String confirmPassword, @RequestParam("authority") String authority, 
     		final RedirectAttributes ra) {
 		
 		String username = user.getUsername();
-		User userExists = this.userService.getUserByUserName(username);
+		PUser userExists = this.userService.getUserByUserName(username);
 		
 		if (userExists != null) {			
 			ra.addFlashAttribute("msgerro", "Usuário já existe!");
