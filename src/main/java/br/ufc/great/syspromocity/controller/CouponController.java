@@ -154,6 +154,31 @@ public class CouponController {
         return "coupons/form";
 
     }
+    
+    /**
+     * Edita um cupom selecionado
+     * @param id
+     * @param model
+     * @return
+     */
+    @RequestMapping("/coupons/view/{id}")
+    public String view(@PathVariable Long id, Model model) {
+    	checkUser();
+    	List<PUser> users = userService.getAll();
+    	List<Promotion> promotions = promotionService.getAll();
+    	
+    	model.addAttribute("idCoupon", couponService.get(id).getId());
+        model.addAttribute("coupon", couponService.get(id));
+        model.addAttribute("promotions", promotions);
+        model.addAttribute("users", users);
+        
+    	model.addAttribute("loginusername", loginUser.getUsername());
+    	model.addAttribute("loginemailuser", loginUser.getEmail());
+    	model.addAttribute("loginuserid", loginUser.getId());
+
+        return "users/formViewCoupon";
+
+    }
 
     /**
      * Salva um novo cupom
@@ -164,6 +189,10 @@ public class CouponController {
     @RequestMapping(value = "/coupons/save", method = RequestMethod.POST)
     public String save(Coupon coupon, final RedirectAttributes ra) {
         Coupon save = couponService.save(coupon);
+        
+        save.updateQrCode();
+        couponService.save(save);
+        
         ra.addFlashAttribute("successFlash", "Cupom foi salvo com sucesso.");
         return "redirect:/coupons";
 

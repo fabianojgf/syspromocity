@@ -46,6 +46,8 @@
                 <div class="form-group">
                     <label for="qrCode">QRCode</label>
                     <input type="text" required="true" class="form-control" th:field="*{qrCode}" id="qrCode" readonly="readonly"/>
+                    <br/>
+                    <img id="qrCodeImage" alt="Image" th:src="${'http://localhost:8082/promocity/coupons/'+coupon.id+'/qrCodeImage'}" width="100" height="100" />
                 </div>
                 
                 <div class="form-group">

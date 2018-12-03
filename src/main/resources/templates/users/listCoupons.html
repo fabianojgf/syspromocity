@@ -29,6 +29,7 @@
                     <th>Actived</th>
                     <th>Consumed</th>
                     <th>Image</th>
+                    <th>Ações</th>
                 </tr>
                 <tr th:each="row : ${list}">
                     <td th:text="${row.id}"></td>
@@ -39,8 +40,13 @@
                     <td th:text="${row.numActivedCoUsers}"></td>
                     <td th:text="${row.activated}"></td>
                     <td th:text="${row.consumed}"></td>
-					<td><img alt="Image" th:src="${'/coupons/image/'+row.id}" width="50" height="50" /></td>
-					</tr>
+					<td>
+						<img alt="Image" th:src="${'http://localhost:8082/promocity/coupons/'+row.id+'/qrCodeImage'}" width="30" height="30" />
+					</td>
+					<td>
+                       <a th:href="${'/coupons/view/' + row.id}">visualizar</a>                    
+                    </td>
+				</tr>
             </table>
         </div>
        

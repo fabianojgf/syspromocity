@@ -41,11 +41,7 @@
                     <td th:text="${row.numActivedCoUsers}"></td>
                     <td th:text="${row.activated}"></td>
                     <td th:text="${row.consumed}"></td>
-                    <td>
-                     	<div class="form-group">                                   
-                    		<img alt="Image" th:src="${'/coupons/image/'+row.id}" width="50" height="50"/>                 
-                		</div>
-                    </td> 
+                    <td><img alt="Image" th:src="${'http://localhost:8082/promocity/coupons/'+row.id+'/qrCodeImage'}" width="30" height="30" /></td>
                     <td>
                         <a th:href="${'/coupons/edit/' + row.id}">editar</a>
                     </td>

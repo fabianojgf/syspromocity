@@ -1,14 +1,15 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
 <head>
-    <title>Cadastro de Cupom na Promoção ID</title>
+    <title>Edita Cupom na Promoção ID</title>
 </head>
 <body>
 <section layout:fragment="header">
-    <h1>Cadastro de Cupom na Promoção id</h1>
+	<h1>Visulizar Cupom</h1>
+	<h2 th:text="${'Promoção: '+coupon.promotion.description}"></h2>
     <ol class="breadcrumb">
         <li><a href="/"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-        <li class="active">Cadastro de Cupom na Promoção id</li>
+        <li class="active"><p th:text="${'Visulizar Cupom da Promoção: '+coupon.promotion.id}"></p></li>
     </ol>
 </section>
 <div layout:fragment="content">
@@ -16,27 +17,28 @@
         <div class="box-header with-border">
             <h3 class="box-title">Formulário</h3>
             <div class="box-tools pull-right">
-                <a th:href="${'/promotions/'+idPromotion+'/coupons'}" type="button" class="btn btn-box-tool"><i class="fa fa-list-ul"></i></a>
+                <a th:href="${'/coupons'}" type="button" class="btn btn-box-tool"><i class="fa fa-list-ul"></i></a>
             </div>
         </div>
-        <form data-toggle="validator" role="form" th:object="${coupon}" th:action="${'/promotions/'+idPromotion+'/coupons/save'}" method="post">
+        <form data-toggle="validator" role="form" th:object="${coupon}">
             <div class="box-body">
                 <input type="hidden" th:field="*{id}"/>
 
+				<div class="form-group">
+                    <label for="id">ID</label>
+                    <p id="id"> <span th:text="*{id}"/></p>
+                </div>
                 <div class="form-group">
                     <label for="promotion">Promotion</label>
-                    <select id="promotion" th:field="*{promotion}" required="required">
-						<option value="">Select Promotion</option>
-						<option th:each="promotion : ${promotions}" th:value="${promotion.id}" th:text="${promotion.description}" selected="selected"></option>
-					</select>
+                    <p id="promotion"> <span th:text="*{promotion.description}"/></p>
                 </div>
-                
+                <div class="form-group">
+                    <label for="promotion">Store</label>
+                    <p id="promotion"> <span th:text="*{promotion.store.name}"/></p>
+                </div>
                 <div class="form-group">
                     <label for="user">User</label>
-                    <select id="user" th:field="*{user}" required="required">
-						<option value="">Select User</option>
-						<option th:each="user : ${users}" th:value="${user.id}" th:text="${user.username}" selected="selected"></option>
-					</select>
+                    <p id="user"><span th:text="*{user.username}"/></p>
                 </div>
                 
                 <div class="form-group">
@@ -44,31 +46,27 @@
                     <input type="text" required="true" class="form-control" th:field="*{qrCode}" id="qrCode" readonly="readonly"/>
                     <br/>
                     <img id="qrCodeImage" alt="Image" th:src="${'http://localhost:8082/promocity/coupons/'+coupon.id+'/qrCodeImage'}" width="100" height="100" />
-                </div>              
+                </div>
                 
                 <div class="form-group">
                     <label for="numRequiredCoUsers">Required CoUsers</label>
-                    <input type="number" required="true" class="form-control" th:field="*{numRequiredCoUsers}" id="numRequiredCoUsers" />
+                    <p id="numRequiredCoUsers"><span th:text="*{numRequiredCoUsers}"/></p>
                 </div>
                 
                 <div class="form-group">
                     <label for="numActivedCoUsers">Actived CoUsers</label>
-                    <input type="number" required="true" class="form-control" th:field="*{numActivedCoUsers}" id="numActivedCoUsers" />
+                    <p id="numActivedCoUsers"><span th:text="*{numActivedCoUsers}"/></p>
                 </div>
                 
                 <div class="form-group">
-                    <label for="activated">Actived</label>
-                    <input type="checkbox" class="form-check-input" th:field="*{activated}" id="activated" />
+                    <label for="activated">Activated</label>
+                    <input type="checkbox" class="form-check-input" th:field="*{activated}" id="activated" readonly="readonly"/>
                 </div>
                 
                 <div class="form-group">
-                    <label for="consumed">Consumed</label>
-                    <input type="checkbox" class="form-check-input" th:field="*{consumed}" id="consumed" />
-                </div>
-                
-            </div>
-            <div class="box-footer">
-                <button type="submit" class="btn btn-primary">Salvar</button>
+                    <label for="special">Consumed</label>
+                    <input type="checkbox" class="form-check-input" th:field="*{consumed}" id="consumed" readonly="readonly"/>
+                </div>               
             </div>
         </form>
     </div>

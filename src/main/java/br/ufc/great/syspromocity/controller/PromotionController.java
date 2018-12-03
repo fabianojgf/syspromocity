@@ -19,6 +19,7 @@ import br.ufc.great.syspromocity.model.Coupon;
 import br.ufc.great.syspromocity.model.Promotion;
 import br.ufc.great.syspromocity.model.Store;
 import br.ufc.great.syspromocity.model.PUser;
+import br.ufc.great.syspromocity.service.CouponsService;
 import br.ufc.great.syspromocity.service.PromotionsService;
 import br.ufc.great.syspromocity.service.StoresService;
 import br.ufc.great.syspromocity.service.UsersService;
@@ -31,17 +32,23 @@ import br.ufc.great.syspromocity.util.ManipuladorDatas;
 public class PromotionController {
 
     private PromotionsService promotionService;
+    private CouponsService couponService;
     private List<Coupon> listCoupons=null;
     private UsersService userService;
     private StoresService storeService;
     private PUser loginUser;
     
     @Autowired
-    public void setpromotionService(PromotionsService promotionService) {
+    public void setPromotionService(PromotionsService promotionService) {
         this.promotionService = promotionService;
     }
-    
+
     @Autowired
+	public void setCouponService(CouponsService couponService) {
+		this.couponService = couponService;
+	}
+
+	@Autowired
     public void setUserService(UsersService userService) {
     	this.userService = userService;
     }
@@ -251,8 +258,11 @@ public class PromotionController {
     	int indexCoupon = save.getCoupons().size()-1;
     	Coupon couponAux = save.getCoupons().get(indexCoupon);
     	
-    	String idCoupon = String.valueOf(couponAux.getId());
-    	new GeradorQRCode().gerar(promotionCode, new Constantes().filePathQRCode, idCoupon+".png");
+    	couponAux.updateQrCode();
+    	couponService.save(couponAux);
+    	
+    	//String idCoupon = String.valueOf(couponAux.getId());
+    	//new GeradorQRCode().gerar(promotionCode, new Constantes().filePathQRCode, idCoupon+".png");
 
         ra.addFlashAttribute("successFlash", "Promoção foi salva com novo cupom.");
         return "redirect:/promotions/"+id+"/coupons";
@@ -330,6 +340,10 @@ public class PromotionController {
     			break;
     		}    		
     	}
+    	
+    	coupon.updateQrCode();
+    	couponService.save(coupon);
+    	
     	//adiciona o cupom, com novos dados, na lista de cupons da promoção
     	promotion.getCoupons().add(coupon);
     	
